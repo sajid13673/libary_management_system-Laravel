@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('members', function (Blueprint $table) {
+        Schema::create('borrowings', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->length(50)->nullable(false);
-            $table->string('email')->nullable(false);
-            $table->string('address')->nullable(false);
-            $table->integer('phone_number')->length(10)->nullable(false);
+            $table->unsignedBigInteger('book_id')->nullable(false);
+            $table->unsignedBigInteger('member_id')->nullable(false);
+            $table->date('due_date')->nullable(true);
             $table->boolean('status')->default(true);
+            $table->date('return_date')->nullable(true);
+            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
             $table->timestamps();
-            $table->unique('email');
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('members');
+        Schema::dropIfExists('borrowings');
     }
 };

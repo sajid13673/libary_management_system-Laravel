@@ -3,57 +3,81 @@
 namespace domain\Services;
 
 use App\Models\Book;
+use App\Models\Image;
+use App\Traits\ImageManager;
 use Exception;
-use Illuminate\Support\Facades\Validator;
 
 class BookService
 {
     protected $book;
+    protected $image;
+    use ImageManager;
     public function __construct()
     {
         $this->book = new Book();
+        $this->image = new Image();
     }
     public function all()
     {
-        return $this->book->all();
+        try {
+            $books = $this->book->all();
+            return response()->json(["status" => true, "data" => $books], 200);
+        } catch (Exception $e) {
+            return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
+        }
     }
     public function store($request)
     {
         try {
             $data = $request->all();
-            $validation = Validator::make($data, [
-                'title' => 'required',
-                'author' => 'required',
-                'publisher' => 'required',
-                'year' => 'required',
-            ]);
-            if ($validation->fails()) {
-                return response()->json(['errors' => $validation->errors()], 422);
-            };
-
-            $response = $this->book->create($data);
-            return $response;
+            $book = $this->book->create($data);
+            if($file = $request->file('image')){
+                $saved_image = $this->uploads($file, "public/uploads");
+                $image_data = ["name" => $saved_image['fileName'], "path" => "storage/uploads/"];
+                $image = $this->image->create($image_data);
+                $book->images()->save($image);
+            }
+            return response()->json(["status" => true, "message" => "Book created successfully"], 200);
         } catch (Exception $e) {
             return response(["msg" => $e->getMessage(), "status" => false], 500);
         }
     }
-    public function getBookById($bookId)
+    public function get($bookId)
     {
         try {
-            return $this->book->find($bookId);
+            $book = $this->book->find($bookId);
+            return response()->json(["status" => true, "data" => $book], 200);
         } catch (Exception $e) {
             return response(["msg" => $e->getMessage(), "status" => false], 500);
         }
     }
-    public function updateBookById()
+    public function updateBookById($request, $id)
     {
+        try {
+            $book = $this->book->find($id);
+            $book->update($request->all());
+            if($file = $request->file('image')){
+                $currentImage = $book->images()->first();
+                if($currentImage !== null){
+                    $this->deleteFile(str_replace("storage","public",$currentImage->path), $currentImage->name); // Deleting the image file
+                    $currentImage->delete();
+                }
+                $saved_image = $this->uploads($file, "public/uploads");
+                $image_data = ["name" => $saved_image['fileName'], "path" => "storage/uploads/"];
+                $image = $this->image->create($image_data);
+                $book->images()->save($image);
+            }
+            return response()->json(["status" => true, "msg" => "Succesfully updated"], 200);
+        } catch (Exception $e) {
+            return response(["msg" => $e->getMessage(), "status" => false], 500);
+        }
     }
-    public function deleteBookById($bookId)
+    public function delete($bookId)
     {
         try {
             $book = $this->book->find($bookId);
             $book->delete();
-            return response(["msg" => "Succesfully deleted", "status" => true], 500);
+            return response(["msg" => "Succesfully deleted", "status" => true], 200);
         } catch (Exception $e) {
             return response(["msg" => $e->getMessage(), "status" => false], 500);
         }

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\BookController as AdminBookController;
+use App\Http\Controllers\Admin\BorrowingController;
+use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,5 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('login', [UserController::class, 'userLogin'],);
 Route::post('register', [UserController::class, 'register'],);
-Route::post('book',[AdminBookController::class,'store']);
-Route::get('book/id',[AdminBookController::class,'get']);
+// Route::post('book',[AdminBookController::class,'store']);
+// Route::get('book/id',[AdminBookController::class,'get']);
+
+Route::resource('member', MemberController::class);
+Route::resource('book', AdminBookController::class);
+Route::resource('borrowing',BorrowingController::class);

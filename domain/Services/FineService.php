@@ -2,19 +2,14 @@
 
 namespace domain\Services;
 
-use App\Models\Image;
 use App\Models\Member;
-use App\Traits\ImageManager;
 
-class MemberService
+class FineService
 {
     protected $member;
-    protected $image;
-    use ImageManager;
     public function __construct()
     {
         $this->member = new Member();
-        $this->image = new Image();
     }
     public function all()
     {
@@ -29,14 +24,8 @@ class MemberService
     {
         try {
             $data = $request->all();
-            $member = $this->member->create($data);
-            if($file = $request->file('image')){
-                $saved_image = $this->uploads($file, "public/uploads");
-                $image_data = ["name" => $saved_image['fileName'], "path" => "storage/uploads/"];
-                $image = $this->image->create($image_data);
-                $member->images()->save($image);
-            }
-            return response()->json(["status" => true, "msg" => "Successfully created new member"], 200);
+            $this->member->create($data);
+            return response()->json(["status" => true, "msg" => "Successfully created"], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
         }
@@ -55,18 +44,7 @@ class MemberService
         try {
             $member = $this->member->find($id);
             $member->update($request->all());
-            if($file = $request->file('image')){
-                $currentImage = $member->images()->first();
-                if($currentImage !== null){
-                    $this->deleteFile(str_replace("storage","public",$currentImage->path), $currentImage->name); // Deleting the image file
-                    $currentImage->delete();
-                }
-                $saved_image = $this->uploads($file, "public/uploads");
-                $image_data = ["name" => $saved_image['fileName'], "path" => "storage/uploads/"];
-                $image = $this->image->create($image_data);
-                $member->images()->save($image);
-            }
-            return response()->json(["status" => true, "msg" => "Successfully updated member"], 200);
+            return response()->json(["status" => true, "msg" => "Successfully updated"], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
         }
@@ -76,7 +54,7 @@ class MemberService
         try {
             $member = $this->member->find($memberId);
             $member->delete();
-            return response()->json(["status" => true, "msg" => "Successfully deleted member"], 200);
+            return response()->json(["status" => true, "msg" => "Successfully deleted"], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
         }

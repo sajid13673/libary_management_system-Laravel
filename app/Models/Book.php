@@ -15,4 +15,19 @@ class Book extends Model
         "publisher",
         "year",
     ];
+    protected $appends = ['path'];
+    public function borrowing(){
+        return $this->hasMany(Borrowing::class);
+    }
+    public function images(){
+        return $this->hasMany(Image::class);
+    }
+    public function getPathAttribute()
+    {
+        $image = $this->images()->where('book_id', $this->id)->first();
+        if($image == null){
+            return null;
+        }
+        return asset($image->path.$image->name);
+    }
 }
