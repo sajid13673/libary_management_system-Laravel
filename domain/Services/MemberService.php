@@ -41,10 +41,14 @@ class MemberService
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
         }
     }
-    public function get($memberId)
+    public function get($memberId, $request)
     {
         try {
             $member = $this->member->find($memberId);
+            if($request->borrowing){
+                $member = $this->member->with('borrowing.book')->find($memberId);
+            }
+
             return response()->json(["status" => true, "data" => $member], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);

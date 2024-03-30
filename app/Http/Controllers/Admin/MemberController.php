@@ -22,7 +22,7 @@ class MemberController extends Controller
     public function destroy($id){
         return MemberFacade::delete($id);
     }
-    public function show($id){
-        return MemberFacade::get($id);
+    public function show($id, Request $request){
+        return MemberFacade::get($id, $request);
     }
 }
