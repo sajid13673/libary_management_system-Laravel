@@ -14,6 +14,7 @@ class Book extends Model
         "author",
         "publisher",
         "year",
+        "status"
     ];
     protected $appends = ['path'];
     public function borrowing(){
