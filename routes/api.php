@@ -21,12 +21,16 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::group([
+    "middleware" => ["auth:api"]
+], function(){
+    Route::get("profile", [UserController::class, "profile"]);
+    Route::get("logout", [UserController::class, "logout"]);
+    Route::resource('member', MemberController::class);
+    Route::resource('book', AdminBookController::class);
+    Route::resource('borrowing',BorrowingController::class);
+});
 
-Route::post('login', [UserController::class, 'userLogin'],);
-Route::post('register', [UserController::class, 'register'],);
-// Route::post('book',[AdminBookController::class,'store']);
-// Route::get('book/id',[AdminBookController::class,'get']);
+Route::post('login', [UserController::class, 'login'],);
+// Route::post('register', [UserController::class, 'register'],);
 
-Route::resource('member', MemberController::class);
-Route::resource('book', AdminBookController::class);
-Route::resource('borrowing',BorrowingController::class);

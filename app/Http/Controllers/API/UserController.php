@@ -11,26 +11,57 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    function userLogin(request $request){
-        $input = $request->all();
-        $validation = Validator::make($input,[
-            'email' => 'required|email',
-            'password' => 'required',
+    public function login(Request $request){
+
+        // Data validation
+        $request->validate([
+            "email" => "required|email",
+            "password" => "required"
         ]);
-        
-        if($validation->fails()){
-            return response()->json(['error' => $validation->errors()->all()], 422);
+
+        // Auth Facade
+        if(Auth::attempt([
+            "email" => $request->email,
+            "password" => $request->password
+        ])){
+
+            $user = Auth::user();
+
+            $token = $user->createToken("myToken")->accessToken;
+
+            return response()->json([
+                "status" => true,
+                "message" => "Login successful",
+                "access_token" => $token
+            ]);
         }
-        if (Auth::attempt(['email' => $input['email'], 'password' => $input['password']])){
-            $authenticated_user = Auth::user();
-            $user = User::find($authenticated_user->id);
-            $token = $user->createToken('myApp')->accessToken;
-            return response()->json(['token' => $token]);
-        };
-        $authenticated_user = Auth::user();
-        return ['request' => $input, 'user'=>$authenticated_user];
+
+        return response()->json([
+            "status" => false,
+            "message" => "Invalid credentials"
+        ]);
     }
-    public function register(Request $request){
-        return UserFacade::store($request);
+
+    // Profile API (GET)
+    public function profile(){
+        
+        $userdata = Auth::user();
+
+        return response()->json([
+            "status" => true,
+            "message" => "Profile data",
+            "data" => $userdata
+        ]);
+    }
+
+    // Logout API (GET)
+    public function logout(){
+
+        auth()->user()->token()->revoke();
+
+        return response()->json([
+            "status" => true,
+            "message" => "User logged out"
+        ]);
     }
 }
