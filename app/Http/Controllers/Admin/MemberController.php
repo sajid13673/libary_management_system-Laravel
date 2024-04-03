@@ -10,8 +10,8 @@ use domain\Facades\MemberFacade;
 
 class MemberController extends Controller
 {
-    public function index(){
-        return MemberFacade::all();
+    public function index(Request $request){
+        return MemberFacade::all( $request);
     }
     public function store(MemberPostRequest $request){
         return MemberFacade::store($request);

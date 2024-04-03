@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 
 class BorrowingController extends Controller
 {
-    public function index(){
-        return BorrowingFacade::all();
+    public function index(Request $request){
+        return BorrowingFacade::all($request);
     }
     public function store(Request $request){
         return BorrowingFacade::store($request);

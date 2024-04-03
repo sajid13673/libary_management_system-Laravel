@@ -12,10 +12,10 @@ class BorrowingService
     {
         $this->borrowing = new Borrowing();
     }
-    public function all()
+    public function all($request)
     {
         try {
-            $products = $this->borrowing->all();
+            $products = $this->borrowing->paginate($request->per_page);
             return response()->json(["status" => 200, "data" => $products], 200);
         } catch (Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);

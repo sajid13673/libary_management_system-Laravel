@@ -10,8 +10,8 @@ use domain\Facades\BookFacade;
 
 class BookController extends Controller
 {
-    public function index(){
-        return BookFacade::all();
+    public function index(Request $request){
+        return BookFacade::all($request);
     }
     public function store(BookPostRequest $request){
         return BookFacade::store($request);

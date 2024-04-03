@@ -16,10 +16,10 @@ class MemberService
         $this->member = new Member();
         $this->image = new Image();
     }
-    public function all()
+    public function all($request)
     {
         try {
-            $members = $this->member->all();
+            $members = $this->member->paginate($request->per_page);
             return response()->json(["status" => true, "data" => $members], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
@@ -46,7 +46,9 @@ class MemberService
         try {
             $member = $this->member->find($memberId);
             if($request->borrowing){
-                $member = $this->member->with('borrowing.book')->find($memberId);
+                $borrowings = $this->member->find($memberId)->borrowing()->with('book')->paginate($request->per_page);
+                $member->borrowing = $borrowings;
+                // $member = $this->member->with('borrowing.book')->find($memberId);
             }
 
             return response()->json(["status" => true, "data" => $member], 200);

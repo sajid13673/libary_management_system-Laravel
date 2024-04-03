@@ -17,10 +17,10 @@ class BookService
         $this->book = new Book();
         $this->image = new Image();
     }
-    public function all()
+    public function all($request)
     {
         try {
-            $books = $this->book->all();
+            $books = $this->book->paginate($request->per_page);
             return response()->json(["status" => true, "data" => $books], 200);
         } catch (Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
