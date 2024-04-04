@@ -15,7 +15,7 @@ class Member extends Model
         "address",
         "phone_number",
     ];
-    protected $appends = ['path'];
+    protected $appends = ['path','activeBorrowings'];
     public function borrowing(){
         return $this->hasMany(Borrowing::class);
     }
@@ -25,9 +25,13 @@ class Member extends Model
     public function getPathAttribute()
     {
         $image = $this->images()->where('member_id', $this->id)->first();
-        if($image == null){
+        if($image == false){
             return null;
         }
         return asset($image->path.$image->name);
+    }
+    public function getActiveBorrowingsAttribute(){
+        $count = $this->borrowing()->where('status', 1)->count();
+        return $count > 0 ? true : false;
     }
 }
