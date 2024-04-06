@@ -16,7 +16,7 @@ class Book extends Model
         "year",
         "status"
     ];
-    protected $appends = ['path'];
+    protected $appends = ['path','activeBorrowings'];
     public function borrowing(){
         return $this->hasMany(Borrowing::class);
     }
@@ -30,5 +30,12 @@ class Book extends Model
             return null;
         }
         return asset($image->path.$image->name);
+    }
+    public function getActiveBorrowingsAttribute(){
+        $count = $this->borrowing()->where('status', true)->count();
+        if($count > 0){
+            return true;
+        }
+        return false;
     }
 }
