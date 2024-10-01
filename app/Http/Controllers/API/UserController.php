@@ -12,13 +12,12 @@ use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
     public function login(Request $request){
-
+        $adminScopes = ['manage-books', 'manage-members', 'manage-borrowings'];
         // Data validation
         $request->validate([
             "email" => "required|email",
             "password" => "required"
         ]);
-
         // Auth Facade
         if(Auth::attempt([
             "email" => $request->email,
@@ -27,7 +26,7 @@ class UserController extends Controller
 
             $user = Auth::user();
             if($user->role == "admin"){
-                $token = $user->createToken("myToken",['everything'])->accessToken;
+                $token = $user->createToken("myToken",$adminScopes)->accessToken;
             }
             else{
                 $token = $user->createToken("myToken")->accessToken;
