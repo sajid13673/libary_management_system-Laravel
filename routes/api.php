@@ -24,11 +24,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group([
     "middleware" => ["auth:api"]
 ], function(){
-    // Route::get("profile", [UserController::class, "profile"]);
     Route::get("logout", [UserController::class, "logout"]);
-    Route::resource('member', MemberController::class);
-    Route::resource('book', AdminBookController::class);
-    Route::resource('borrowing',BorrowingController::class);
+    Route::resource('member', MemberController::class)->middleware(['scope:manage-members']);
+    Route::resource('book', AdminBookController::class)->middleware(['scope:manage-books']);
+    Route::resource('borrowing',BorrowingController::class)->middleware(['scope:manage-borrowings']);
 });
 
 Route::post('login', [UserController::class, 'login'],);

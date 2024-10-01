@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,5 +21,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        Passport::tokensCan([
+            'manage-members' => 'Manage Members',
+            'manage-borrowings' => 'Manage Borrowings',
+            'manage-books' => 'Manage Books',
+            'read-books' => 'Only read books',
+        ]);
     }
 }

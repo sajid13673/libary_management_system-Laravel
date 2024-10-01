@@ -26,8 +26,12 @@ class UserController extends Controller
         ])){
 
             $user = Auth::user();
-
-            $token = $user->createToken("myToken")->accessToken;
+            if($user->role == "admin"){
+                $token = $user->createToken("myToken",['everything'])->accessToken;
+            }
+            else{
+                $token = $user->createToken("myToken")->accessToken;
+            }
 
             return response()->json([
                 "status" => true,
