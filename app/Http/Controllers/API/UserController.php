@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterPostRequest;
 use App\Models\User;
 use domain\Facades\UserFacade;
 use Illuminate\Http\Request;
@@ -66,5 +67,15 @@ class UserController extends Controller
             "status" => true,
             "message" => "User logged out"
         ]);
+    }
+    public function register(RegisterPostRequest $request) {
+        $user = new User();
+        $user = $user->create(['email' => $request->email, 'password' => bcrypt($request->password)]);
+        $user->member()->create($request->all());
+        return response()->json([
+           'status' => true,
+           'message' => 'User registered successfully',
+            'user' => $user
+           ], 201);
     }
 }
