@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Member extends Model
 {
@@ -16,6 +17,10 @@ class Member extends Model
         "phone_number",
     ];
     protected $appends = ['path','activeBorrowings'];
+    public function user():BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
     public function borrowing(){
         return $this->hasMany(Borrowing::class);
     }
@@ -34,4 +39,5 @@ class Member extends Model
         $count = $this->borrowing()->where('status', 1)->count();
         return $count > 0 ? true : false;
     }
+
 }
