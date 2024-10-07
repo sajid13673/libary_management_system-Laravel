@@ -19,7 +19,7 @@ class MemberService
     public function all($request)
     {
         try {
-            $members = $this->member->paginate($request->per_page);
+            $members = $this->member->with('user')->paginate($request->per_page);
             return response()->json(["status" => true, "data" => $members], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
