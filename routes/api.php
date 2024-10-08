@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BookController as AdminBookController;
+use App\Http\Controllers\Member\BookController as MemberBookController;
 use App\Http\Controllers\Admin\BorrowingController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\API\UserController;
@@ -28,6 +29,7 @@ Route::group([
     Route::resource('member', MemberController::class)->middleware(['scope:manage-members']);
     Route::resource('book', AdminBookController::class)->middleware(['scope:manage-books']);
     Route::resource('borrowing',BorrowingController::class)->middleware(['scope:manage-borrowings']);
+    Route::get('member_book',[MemberBookController::class, "index"])->middleware(['scope:read-books, manage-books']);
 });
 
 Route::post('login', [UserController::class, 'login'],);
