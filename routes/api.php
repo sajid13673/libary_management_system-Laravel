@@ -30,6 +30,7 @@ Route::group([
     Route::resource('book', AdminBookController::class)->middleware(['scope:manage-books']);
     Route::resource('borrowing',BorrowingController::class)->middleware(['scope:manage-borrowings']);
     Route::get('member_book',[MemberBookController::class, "index"])->middleware(['scope:read-books, manage-books']);
+    Route::get('profile', [UserController::class, 'profile']);
 });
 
 Route::post('login', [UserController::class, 'login'],);

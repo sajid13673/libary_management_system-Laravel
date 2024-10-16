@@ -52,7 +52,9 @@ class UserController extends Controller
     public function profile()
     {
 
-        $userdata = Auth::user();
+        $user = Auth::user();
+        $userdata = $user->load(['member'=>['borrowing.book']]);
+
 
         return response()->json([
             "status" => true,
