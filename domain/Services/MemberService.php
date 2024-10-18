@@ -9,12 +9,10 @@ use App\Traits\ImageManager;
 class MemberService
 {
     protected $member;
-    protected $image;
     use ImageManager;
     public function __construct()
     {
         $this->member = new Member();
-        $this->image = new Image();
     }
     public function all($request)
     {
@@ -28,13 +26,13 @@ class MemberService
     public function store($request)
     {
         try {
+            $user = $this->member->user()->create(["email"=>$request->email, "password"=>bcrypt($request->password)]);
             $data = $request->all();
-            $member = $this->member->create($data);
+            $member = $user->member()->create($data);
             if($file = $request->file('image')){
                 $saved_image = $this->uploads($file, "public/uploads");
                 $image_data = ["name" => $saved_image['fileName'], "path" => "storage/uploads/"];
-                $image = $this->image->create($image_data);
-                $member->images()->save($image);
+                $member->images()->create($image_data);
             }
             return response()->json(["status" => true, "msg" => "Successfully created new member"], 200);
         } catch (\Exception $e) {
@@ -69,8 +67,7 @@ class MemberService
                 }
                 $saved_image = $this->uploads($file, "public/uploads");
                 $image_data = ["name" => $saved_image['fileName'], "path" => "storage/uploads/"];
-                $image = $this->image->create($image_data);
-                $member->images()->save($image);
+                $member->images()->create($image_data);
             }
             return response()->json(["status" => true, "msg" => "Successfully updated member"], 200);
         } catch (\Exception $e) {

@@ -22,8 +22,10 @@ class MemberPostRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'email' => 'email|required|unique:users,email',
+            'password' =>'required|min:8|confirmed',
+            'password_confirmation' =>'required',
             'name' => 'string|required|max:50',
-            'email' =>'required|unique:members,email|email',
             'phone_number' =>'required|numeric|unique:members,phone_number|digits:10',
             'address' =>'required|string',
             'image' => 'nullable|mimes:png,jpg,jpeg',

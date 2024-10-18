@@ -23,7 +23,6 @@ class MemberPutRequest extends FormRequest
     {
         return [
             'name' => 'string|required|max:50',
-            'email' =>'required|email',
             'phone_number' =>'required|numeric|digits:10',
             'address' =>'required|string',
             'status' =>'boolean',
