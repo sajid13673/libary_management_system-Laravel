@@ -45,7 +45,7 @@ class UserController extends Controller
         return response()->json([
             "status" => false,
             "message" => "Invalid credentials"
-        ]);
+        ],500);
     }
 
     // Profile API (GET)
