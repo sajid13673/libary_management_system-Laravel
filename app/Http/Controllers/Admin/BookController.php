@@ -25,4 +25,7 @@ class BookController extends Controller
     public function show($id){
         return BookFacade::get($id);
     }
+    public function getBookStats(){
+        return BookFacade::getBookStats();
+    }
 }

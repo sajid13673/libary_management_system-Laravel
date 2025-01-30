@@ -82,4 +82,19 @@ class BookService
             return response(["msg" => $e->getMessage(), "status" => false], 500);
         }
     }
+    public function getBookStats(){
+        try {
+            $totalBooks = $this->book->count();
+            $issuedBooks = $this->book->whereHas('borrowing', function($query) {
+                $query->where('status', true);
+            })->count();
+            $availableBooks = $totalBooks - $issuedBooks;
+            $overdueBooks = $this->book->whereHas('borrowing', function($query) {
+                $query->where('status', true)->where('due_date', '>', now());
+            })->with('borrowing')->count();
+            return response()->json(["status" => true, "data" => ['totalBooks' => $totalBooks, 'issuedBooks' => $issuedBooks, 'availableBooks' => $availableBooks, 'overdueBooks' => $overdueBooks]], 200);
+        } catch (\Exception $e) {
+            return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
+        }
+    }
 }

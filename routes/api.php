@@ -27,10 +27,13 @@ Route::group([
 ], function(){
     Route::get("logout", [UserController::class, "logout"]);
     Route::resource('member', MemberController::class)->middleware(['scope:manage-members']);
-    Route::resource('book', AdminBookController::class)->middleware(['scope:manage-books']);
     Route::resource('borrowing',BorrowingController::class)->middleware(['scope:manage-borrowings']);
     Route::get('member_book',[MemberBookController::class, "index"])->middleware(['scope:read-books, manage-books']);
     Route::get('profile', [UserController::class, 'profile']);
+    Route::name('book')->prefix('book')->group(function(){
+        Route::resource('/', AdminBookController::class)->middleware(['scope:manage-books']);
+        Route::get('/stats', [AdminBookController::class, 'getBookStats']);
+    });
 });
 
 Route::post('login', [UserController::class, 'login'],);
