@@ -30,8 +30,8 @@ Route::group([
     Route::resource('borrowing',BorrowingController::class)->middleware(['scope:manage-borrowings']);
     Route::get('member_book',[MemberBookController::class, "index"])->middleware(['scope:read-books, manage-books']);
     Route::get('profile', [UserController::class, 'profile']);
-    Route::name('book')->prefix('book')->group(function(){
-        Route::resource('/', AdminBookController::class)->middleware(['scope:manage-books']);
+    Route::name('book')->prefix('book')->middleware(['scope:manage-books'])->group(function(){
+        Route::resource('/', AdminBookController::class);
         Route::get('/stats', [AdminBookController::class, 'getBookStats']);
     });
 });
