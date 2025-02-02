@@ -12,7 +12,7 @@ class UpdateFines extends Command
      *
      * @var string
      */
-    protected $signature = 'app:update-fines';
+    protected $signature = 'fines:update';
 
     /**
      * The console command description.
