@@ -26,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
             'manage-borrowings' => 'Manage Borrowings',
             'manage-books' => 'Manage Books',
             'read-books' => 'Only read books',
+            'manage-fines' => 'Manage fines'
         ]);
     }
 }

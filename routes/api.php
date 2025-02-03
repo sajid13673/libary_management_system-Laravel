@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BookController as AdminBookController;
 use App\Http\Controllers\Member\BookController as MemberBookController;
 use App\Http\Controllers\Admin\BorrowingController;
+use App\Http\Controllers\Admin\FineController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
@@ -30,6 +31,7 @@ Route::group([
     Route::resource('borrowing',BorrowingController::class)->middleware(['scope:manage-borrowings']);
     Route::get('member_book',[MemberBookController::class, "index"])->middleware(['scope:read-books, manage-books']);
     Route::get('profile', [UserController::class, 'profile']);
+    Route::resource('fine',FineController::class)->middleware(['scope:manage-fines']);
     Route::name('book')->prefix('book')->middleware(['scope:manage-books'])->group(function(){
         Route::resource('/', AdminBookController::class);
         Route::get('/stats', [AdminBookController::class, 'getBookStats']);

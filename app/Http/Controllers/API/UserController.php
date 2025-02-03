@@ -14,7 +14,7 @@ class UserController extends Controller
 {
     public function login(Request $request)
     {
-        $adminScopes = ['manage-books', 'manage-members', 'manage-borrowings'];
+        $adminScopes = ['manage-books', 'manage-members', 'manage-borrowings', 'manage-fines'];
         $memberScopes = ['read-books'];
         // Data validation
         $request->validate([
