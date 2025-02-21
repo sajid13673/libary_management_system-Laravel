@@ -18,5 +18,11 @@ class Fine extends Model
     public function borrowing(){
         return $this->belongsTo(Borrowing::class);
     }
+    public function member(){
+        return $this->belongsTo(Member::class);
+    }
+    public function payment() { 
+        return $this->hasOne(Payment::class);
+    }
 
 }

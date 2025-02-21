@@ -43,4 +43,7 @@ class Member extends Model
     public function getActiveBorrowingsAttribute(){
         return $this->borrowing()->with('book')->where('status', 1)->get();
     }
+    public function fines(){
+        return $this->hasMany(Fine::class);
+    }
 }

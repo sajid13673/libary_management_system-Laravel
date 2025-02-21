@@ -5,6 +5,7 @@ use App\Http\Controllers\Member\BookController as MemberBookController;
 use App\Http\Controllers\Admin\BorrowingController;
 use App\Http\Controllers\Admin\FineController;
 use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,7 @@ Route::group([
         Route::resource('/', AdminBookController::class);
         Route::get('/stats', [AdminBookController::class, 'getBookStats']);
     });
+    Route::post("payment", [PaymentController::class, 'makePayment']);
 });
 
 Route::post('login', [UserController::class, 'login'],);
