@@ -33,7 +33,7 @@ class FineService
     public function get($fineId)
     {
         try {
-            $fine = $this->fine->with('borrowing.book')->find($fineId);
+            $fine = $this->fine->with(['member', 'borrowing.book'])->find($fineId);
             return response()->json(["status" => true, "data" => $fine], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
