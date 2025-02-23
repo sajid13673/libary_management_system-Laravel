@@ -14,7 +14,7 @@ class FineService
     public function all()
     {
         try {
-            $fines = $this->fine->with('member')->get();
+            $fines = $this->fine->with(['member','borrowing'])->get();
             return response()->json(["status" => true, "data" => $fines], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
