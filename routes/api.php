@@ -33,9 +33,9 @@ Route::group([
     Route::get('member_book',[MemberBookController::class, "index"])->middleware(['scope:read-books, manage-books']);
     Route::get('profile', [UserController::class, 'profile']);
     Route::resource('fine',FineController::class)->middleware(['scope:manage-fines']);
-    Route::name('book')->prefix('book')->middleware(['scope:manage-books'])->group(function(){
-        Route::resource('/', AdminBookController::class);
-        Route::get('/stats', [AdminBookController::class, 'getBookStats']);
+    Route::name('book')->middleware(['scope:manage-books'])->group(function(){
+        Route::get('book/stats', [AdminBookController::class, 'getBookStats']);
+        Route::resource('book', AdminBookController::class);
     });
     Route::post("payment", [PaymentController::class, 'makePayment']);
 });
