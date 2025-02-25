@@ -52,6 +52,7 @@ class Member extends Model
     }
     public function getPendingFinesAttribute()
     {
-        return $this->fines->where('is_paid', false);
+        return $this->fines()->where('is_paid', false)->with('borrowing.book')->get();
     }
+    
 }
