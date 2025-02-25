@@ -5,10 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterPostRequest;
 use App\Models\User;
-use domain\Facades\UserFacade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -45,16 +43,14 @@ class UserController extends Controller
         return response()->json([
             "status" => false,
             "message" => "Invalid credentials"
-        ],500);
+        ], 500);
     }
 
-    // Profile API (GET)
     public function profile()
     {
 
         $user = Auth::user();
-        $userdata = $user->load(['member'=>['borrowing.book']]);
-
+        $userdata = $user->load(['member' => ['borrowing.book']]);
 
         return response()->json([
             "status" => true,
@@ -63,7 +59,6 @@ class UserController extends Controller
         ]);
     }
 
-    // Logout API (GET)
     public function logout()
     {
 

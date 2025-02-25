@@ -16,34 +16,42 @@ class Member extends Model
         "address",
         "phone_number",
     ];
-    protected $appends = ['path','activeBorrowingStatus','activeBorrowings'];
-    public function user():BelongsTo
+    protected $appends = ['path', 'activeBorrowingStatus', 'activeBorrowings', 'pendingFines'];
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-    public function borrowing():HasMany
+    public function borrowing(): HasMany
     {
         return $this->hasMany(Borrowing::class);
     }
-    public function images(){
+    public function images()
+    {
         return $this->hasMany(Image::class);
     }
     public function getPathAttribute()
     {
         $image = $this->images()->where('member_id', $this->id)->first();
-        if($image == false){
+        if ($image == false) {
             return null;
         }
-        return asset($image->path.$image->name);
+        return asset($image->path . $image->name);
     }
-    public function getActiveBorrowingStatusAttribute(){
+    public function getActiveBorrowingStatusAttribute()
+    {
         $count = $this->borrowing()->where('status', 1)->count();
         return $count > 0 ? true : false;
     }
-    public function getActiveBorrowingsAttribute(){
+    public function getActiveBorrowingsAttribute()
+    {
         return $this->borrowing()->with('book')->where('status', 1)->get();
     }
-    public function fines(){
+    public function fines()
+    {
         return $this->hasMany(Fine::class);
+    }
+    public function getPendingFinesAttribute()
+    {
+        return $this->fines->where('is_paid', false);
     }
 }

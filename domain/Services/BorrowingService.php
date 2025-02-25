@@ -3,6 +3,7 @@
 namespace domain\Services;
 
 use App\Models\Borrowing;
+use Carbon\Carbon;
 use Exception;
 
 class BorrowingService
@@ -43,6 +44,10 @@ class BorrowingService
     public function update($request, $id)
     {
         try {
+            $now = Carbon::now();
+            if($request->return_date > $now) {
+                return response()->json(["status" => false, "msg" => "Return date cannot be in the future"], 400);
+            }
             $borrowing = $this->borrowing->find($id);
             $borrowing->update($request->all());
             return response()->json(["status" => true, "msg" => "Succesfully updated"], 200);
