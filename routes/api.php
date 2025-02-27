@@ -38,6 +38,7 @@ Route::group([
         Route::resource('book', AdminBookController::class);
     });
     Route::post("payment", [PaymentController::class, 'makePayment']);
+    Route::post("change_password", [UserController::class, 'changePassword']);
 });
 
 Route::post('login', [UserController::class, 'login'],);
