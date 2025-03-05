@@ -16,7 +16,12 @@ class BorrowingService
     public function all($request)
     {
         try {
-            $products = $this->borrowing->with('book','member')->orderBy('created_at','desc')->paginate($request->per_page);
+            $type = $request->type ? $request->type : 'all';
+            $query = $this->borrowing->with('book','member')->orderBy('created_at','desc');
+            if($type !== 'all' ) {
+                $query->where('status', $type === 'active' ? true : false);
+            }
+            $products = $query->paginate($request->per_page);
             return response()->json(["status" => 200, "data" => $products], 200);
         } catch (Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
