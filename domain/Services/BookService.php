@@ -20,7 +20,9 @@ class BookService
     public function all($request)
     {
         try {
-            $books = $this->book->paginate($request->per_page);
+            $orderBy = $request->order ? $request->order : 'created_at-desc';
+            list($field, $direction) = explode('-', $orderBy);
+            $books = $this->book->orderBy($field, $direction)->paginate($request->per_page);
             return response()->json(["status" => true, "data" => $books], 200);
         } catch (Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
