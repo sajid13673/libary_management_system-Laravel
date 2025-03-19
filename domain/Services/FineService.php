@@ -3,6 +3,7 @@
 namespace domain\Services;
 
 use App\Models\Fine;
+use GuzzleHttp\Psr7\Request;
 
 class FineService
 {
@@ -11,10 +12,15 @@ class FineService
     {
         $this->fine = new Fine();
     }
-    public function all()
+    public function all($request)
     {
         try {
-            $fines = $this->fine->with(['member','borrowing'])->get();
+            $type = $request->type ? $request->type : 'all';
+            $query = $this->fine->with(['member', 'borrowing']);
+            if ($type !== 'all') {
+                $query->where('is_paid', $type === 'paid' ? true : false);
+            }
+            $fines = $query->get();
             return response()->json(["status" => true, "data" => $fines], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);

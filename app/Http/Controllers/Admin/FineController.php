@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 
 class FineController extends Controller
 {
-    public function index(){
-        return FineFacade::all();
+    public function index(Request $request){
+        return FineFacade::all($request);
     }
     public function store(Request $request){
         return FineFacade::store($request);
