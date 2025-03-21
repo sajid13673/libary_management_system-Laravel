@@ -17,7 +17,9 @@ class MemberService
     public function all($request)
     {
         try {
-            $members = $this->member->with('user')->paginate($request->per_page);
+            $orderBy = $request->order ? $request->order : 'created_at-desc';
+            list($field, $direction) = explode('-', $orderBy);
+            $members = $this->member->with('user')->orderBy($field, $direction)->paginate($request->per_page);
             return response()->json(["status" => true, "data" => $members], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
