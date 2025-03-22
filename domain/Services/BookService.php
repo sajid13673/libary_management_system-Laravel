@@ -20,9 +20,16 @@ class BookService
     public function all($request)
     {
         try {
-            $orderBy = $request->order ? $request->order : 'created_at-desc';
-            list($field, $direction) = explode('-', $orderBy);
-            $books = $this->book->orderBy($field, $direction)->paginate($request->per_page);
+            $order_by = $request->order ? $request->order : 'created_at-desc';
+            $search_term = $request->search_term;
+            list($field, $direction) = explode('-', $order_by);
+            $query = $this->book->orderBy($field, $direction);
+            if ($search_term) {
+                $query->where('title', 'like', '%' . $search_term . '%')
+                    ->orWhere('author', 'like', '%' . $search_term . '%')
+                    ->orWhere('publisher', 'like', '%' . $search_term . '%');
+            }
+            $books = $query->paginate($request->per_page);
             return response()->json(["status" => true, "data" => $books], 200);
         } catch (Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
@@ -33,7 +40,7 @@ class BookService
         try {
             $data = $request->all();
             $book = $this->book->create($data);
-            if($file = $request->file('image')){
+            if ($file = $request->file('image')) {
                 $saved_image = $this->uploads($file, "public/uploads");
                 $image_data = ["name" => $saved_image['fileName'], "path" => "storage/uploads/"];
                 $image = $this->image->create($image_data);
@@ -58,10 +65,10 @@ class BookService
         try {
             $book = $this->book->find($id);
             $book->update($request->all());
-            if($file = $request->file('image')){
+            if ($file = $request->file('image')) {
                 $currentImage = $book->images()->first();
-                if($currentImage !== null){
-                    $this->deleteFile(str_replace("storage","public",$currentImage->path), $currentImage->name); // Deleting the image file
+                if ($currentImage !== null) {
+                    $this->deleteFile(str_replace("storage", "public", $currentImage->path), $currentImage->name); // Deleting the image file
                     $currentImage->delete();
                 }
                 $saved_image = $this->uploads($file, "public/uploads");
@@ -84,17 +91,21 @@ class BookService
             return response(["msg" => $e->getMessage(), "status" => false], 500);
         }
     }
-    public function getBookStats(){
+    public function getBookStats()
+    {
         try {
             $totalBooks = $this->book->count();
-            $issuedBooks = $this->book->whereHas('borrowing', function($query) {
+            $issuedBooks = $this->book->whereHas('borrowing', function ($query) {
                 $query->where('status', true);
             })->count();
             $availableBooks = $totalBooks - $issuedBooks;
-            $overdueBooks = $this->book->whereHas('borrowing', function($query) {
+            $overdueBooks = $this->book->whereHas('borrowing', function ($query) {
                 $query->where('status', true)->where('due_date', '>', now());
             })->with('borrowing')->count();
-            return response()->json(["status" => true, "data" => ['totalBooks' => $totalBooks, 'issuedBooks' => $issuedBooks, 'availableBooks' => $availableBooks, 'overdueBooks' => $overdueBooks]], 200);
+            return response()->json([
+                "status" => true,
+                "data" => ['totalBooks' => $totalBooks, 'issuedBooks' => $issuedBooks, 'availableBooks' => $availableBooks, 'overdueBooks' => $overdueBooks]
+            ], 200);
         } catch (\Exception $e) {
             return response()->json(["status" => false, "msg" => $e->getMessage()], 500);
         }
